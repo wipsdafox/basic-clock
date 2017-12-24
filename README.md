@@ -14,4 +14,5 @@ A simple alarm clock app. Designed for use on a Raspi.
 ```
 1.0: Initial release
 1.1: Wallpaper Support
+1.1.1: Made hour display look better
 ```

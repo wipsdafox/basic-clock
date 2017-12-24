@@ -94,6 +94,8 @@ def update():
             if(mixer.music.get_busy() == False):
                 alarm()
 
+        if(int(strftime("%I")) < 10):
+            tmsg = tmsg.lstrip('0')
         draw.itemconfigure(clock_time, text=tmsg) #Update canvas items.
         draw.itemconfigure(date, text=current_date)
         draw.after(1000, update) #Do this again in 1 second.
