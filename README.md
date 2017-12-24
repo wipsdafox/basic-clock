@@ -8,8 +8,6 @@ A simple alarm clock app. Designed for use on a Raspi.
 1. Show notifications from phone via bluetooth.
 2. Bluetooth speaker/music controller
 
-## Spotify
-
 ## Version history
 ```
 1.0: Initial release
