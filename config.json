@@ -3,5 +3,6 @@
   "ALARM_TIME": "07:00 AM",
   "SHOW_SECONDS": 1,
   "USE_WALLPAPER": 1,
-  "WALLPAPER_PATH": "wallpaper.jpg"
+  "WALLPAPER_PATH": "wallpaper.jpg",
+  "MUSIC_DIRECTORY": "/home"
 }

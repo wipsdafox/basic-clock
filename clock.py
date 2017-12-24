@@ -2,9 +2,10 @@
 import json #For reading JSON
 import datetime #For getting current date
 from tkinter import * #User interface
-from time import gmtime, strftime, localtime #For getting time
+from time import gmtime, strftime, localtime, sleep #For getting time
 from pygame import mixer #For alarm sound
 from PIL import Image, ImageTk #For wallpapers
+from os import listdir #For music player
 
 def load_json(filename): #Function for loading JSON into an array
     with open(filename) as data_file:
@@ -38,6 +39,95 @@ if(config["USE_WALLPAPER"] == 1):
 
 global stop_text
 global stop_button
+global playPause
+global backButton
+global nextButton
+global musicList
+global currentSong
+
+#Setup music player icons
+playImage = Image.open("img/play.png")
+nextImage = Image.open("img/next.png")
+prevImage = Image.open("img/back.png")
+pauseImage = Image.open("img/pause.png")
+playTk = ImageTk.PhotoImage(playImage)
+nextTk = ImageTk.PhotoImage(nextImage)
+prevTk = ImageTk.PhotoImage(prevImage)
+pauseTk = ImageTk.PhotoImage(pauseImage)
+playPause = draw.create_image(screen_width / 2, screen_height / 2 + 50, image=playTk)
+backButton = draw.create_image(screen_width / 2 - 64, screen_height / 2 + 50, image=prevTk)
+nextButton = draw.create_image(screen_width / 2 + 64, screen_height / 2 + 50, image=nextTk)
+
+print("Music found:")
+print(listdir(config["MUSIC_DIRECTORY"]))
+musicList = listdir(config["MUSIC_DIRECTORY"])
+currentSong = 0
+
+def playMusic(hi):
+    global currentSong
+    global playPause
+    playPause = draw.create_image(screen_width / 2, screen_height / 2 + 50, image=pauseTk)
+    draw.tag_bind(playPause, '<ButtonPress-1>', pauseMusic)
+    try:
+        mixer.music.unpause()
+
+    except:
+        try:
+            mixer.init()
+            mixer.music.load(musicList[int(currentSong)])
+            mixer.music.play()
+        except:
+            print("Couldn't play music. (Song: " + musicList[currentSong] + ")")
+            currentSong += 1
+            pauseMusic(1)
+            pass
+
+def pauseMusic(hi):
+    global playPause
+    draw.delete(playPause)
+    playPause = draw.create_image(screen_width / 2, screen_height / 2 + 50, image=playTk)
+    draw.tag_bind(playPause, '<ButtonPress-1>', playMusic)
+    try:
+        mixer.music.pause()
+    except:
+        print("Couldn't pause music?")
+        mixer.stop()
+        pass
+
+def nextTrack(hi):
+    global currentSong
+    global musicList
+    currentSong += 1
+    if(currentSong > len(musicList)):
+        currentSong = 0
+    try:
+        mixer.music.fadeout(500)
+        mixer.init()
+        mixer.music.load(musicList[currentSong])
+        playMusic(1)
+
+    except:
+        print("Error switching to next track.")
+        pass
+
+def prevTrack(hi):
+    global currentSong
+    currentSong -= 1
+    if(currentSong == 0):
+        currentSong = len(musicList)
+    try:
+        mixer.music.fadeout(500)
+        mixer.init()
+        mixer.music.load(musicList[currentSong])
+        playMusic(1)
+
+    except:
+        print("Error switching to previous track.")
+        pass
+
+draw.tag_bind(playPause, '<ButtonPress-1>', playMusic)
+draw.tag_bind(backButton, '<ButtonPress-1>', prevTrack)
+draw.tag_bind(nextButton, '<ButtonPress-1>', nextTrack)
 
 def alarm_stop(t):
     print("Stopping alarm.")
