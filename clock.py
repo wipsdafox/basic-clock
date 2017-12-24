@@ -1,9 +1,10 @@
-#MemeOS Clock
+#Clock
 import json #For reading JSON
 import datetime #For getting current date
 from tkinter import * #User interface
 from time import gmtime, strftime, localtime #For getting time
 from pygame import mixer #For alarm sound
+from PIL import Image, ImageTk #For wallpapers
 
 def load_json(filename): #Function for loading JSON into an array
     with open(filename) as data_file:
@@ -13,7 +14,7 @@ def load_json(filename): #Function for loading JSON into an array
 class clock: #Window thing.
     def __init__(self, master):
         self.master = master
-        master.title("MemeOS Clock")
+        master.title("Clock")
 
 config = load_json("config.json") #Load config file. Used for version message and alarm.
 
@@ -28,6 +29,12 @@ screen_height = root.winfo_screenheight()
 #Create canvas.
 draw = Canvas(root, width=screen_width, height=screen_height)
 draw.pack() #I don't know what this line does, but I was told I need it.
+
+#Setup Wallpaper
+if(config["USE_WALLPAPER"] == 1):
+    wallpaper = Image.open(config["WALLPAPER_PATH"])
+    wallpaperImage = ImageTk.PhotoImage(wallpaper)
+    wallpaperObject = draw.create_image(screen_width / 2, screen_height / 2, image=wallpaperImage)
 
 global stop_text
 global stop_button
@@ -53,9 +60,8 @@ def alarm(): #Play alarm sound.
     stop_text = draw.create_text(screen_width / 2, screen_height / 2 + 55, text="Stop", font="Ubuntu", fill="white")
     draw.tag_bind(stop_button, '<ButtonPress-1>', alarm_stop)
 
-
 #Draw statusbar. TODO: Add functionality. (The clock will eventually get notifications from bluetooth.)
-notificationmsg = "0 new notifications"
+notificationmsg = "0 new notifications."
 statusbar_bar = draw.create_rectangle(0, 0, screen_width, 20, fill="black")
 statusbar_text = draw.create_text(screen_width / 2,12, text=notificationmsg, fill="white")
 
@@ -64,10 +70,11 @@ clock_time = draw.create_text(screen_width / 2, screen_height / 2 - 64, text="Th
 date = draw.create_text(screen_width / 2, screen_height / 2, text="This is a placeholder.", font=("Ubuntu"))
 
 #Draw version info
-ver_info = "MemeOS Clock Version " + config["SOFTWARE_VERSION"]
+ver_info = "Clock Version " + config["SOFTWARE_VERSION"]
 ver_msg = draw.create_text(0, screen_height, text=ver_info, anchor=SW, font="Ubuntu")
 
-def update(): #Function to update time and date.
+#Function to update screen
+def update():
     try:
         if(config["SHOW_SECONDS"] == 1):
             current_time = strftime("%I:%M:%S", localtime()) #Grab current time with seconds

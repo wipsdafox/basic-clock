@@ -1,5 +1,7 @@
 {
   "SOFTWARE_VERSION": "1.0",
   "ALARM_TIME": "7:00 AM",
-  "SHOW_SECONDS": 0
+  "SHOW_SECONDS": 0,
+  "USE_WALLPAPER": 1,
+  "WALLPAPER_PATH": "wallpaper.jpg"
 }
