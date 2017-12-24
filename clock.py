@@ -51,7 +51,6 @@ def alarm(): #Play alarm sound.
     global stop_text
     global stop_button
     print("ALARM! Starting playback.")
-    mixer.init()
     mixer.music.load('alarm.mp3')
     mixer.music.play()
     while(mixer.music.get_busy() == False):
@@ -73,8 +72,12 @@ date = draw.create_text(screen_width / 2, screen_height / 2, text="This is a pla
 ver_info = "Clock Version " + config["SOFTWARE_VERSION"]
 ver_msg = draw.create_text(0, screen_height, text=ver_info, anchor=SW, font="Ubuntu")
 
+global alarm_started
+alarm_started = 0
+
 #Function to update screen
 def update():
+    global alarm_started
     try:
         if(config["SHOW_SECONDS"] == 1):
             current_time = strftime("%I:%M:%S", localtime()) #Grab current time with seconds
@@ -90,9 +93,13 @@ def update():
         if(datetime.date.today().strftime("%B") == "December"): #Happy holidays message
             draw.itemconfigure(ver_msg, text="Happy holidays!")
 
-        if(tmsg == config["ALARM_TIME"]): #If it is time for the alarm, play the alarm. TODO: Fix
-            if(mixer.music.get_busy() == False):
+        if(strftime("%I:%M") + " " + time_thing == config["ALARM_TIME"]): #Hacked together alarm check
+            mixer.init()
+            if(mixer.music.get_busy() == False and alarm_started != 1):
                 alarm()
+                alarm_started = 1
+        else:
+            alarm_started = 0
 
         if(int(strftime("%I")) < 10):
             tmsg = tmsg.lstrip('0')
