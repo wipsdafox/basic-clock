@@ -11,7 +11,7 @@ A simple alarm clock app. Designed for use on a Raspi.
 ## Spotify
 
 ## Version history
-`
+```
 1.0: Initial release
 1.1: Wallpaper Support
-`
+```
